@@ -154,4 +154,32 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s,
   return {x,y};
 }
 
+bool lane_occupied (vector<vector<double>>  sensor_fusion, int lane, double car_s) {
+  bool occupied = false;
+
+  // Find the d values for the lane under review
+  double lane_val_l = 0;
+  double lane_val_h = 3.99;
+  if (lane == 1) {
+    lane_val_l = 4.0;
+    lane_val_h = 7.99;
+  } else if (lane == 2) {
+    lane_val_l = 8.0;
+    lane_val_h = 12.0;
+  }
+ 
+  // Check the vehicles on the road, if they are in the same area as the car the lane is occupied
+  for (vector<double> vehicle : sensor_fusion) {    
+    if (vehicle[6] > lane_val_l && vehicle[6] < lane_val_h) {
+      if ((vehicle[5] > car_s - 10) && (vehicle[5] - car_s < 10)) {
+        std::cout << "Car Delta " <<  car_s - vehicle[5] << std::endl;
+        // Leave the first chance we get
+        return true;
+      }
+    }
+  }
+
+  return occupied;
+}
+
 #endif  // HELPERS_H

@@ -1,6 +1,32 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
    
+
+## Overview
+In this project a simulated car drives around an environment populated with 6 lanes of traffic (3 lanes in each direction).  My final test of the code allowed the vehicle to navigate the environment for over 20 minutes without incident.  The test was ended without incident.  After observing multiple lane changes from each lane, cars occupying all three lanes inhibiting the vehicle from passing, and the vehicle routinely choosing the only open lane to pass I deemed the code satisfactory for submitting.
+
+
+
+## Code Walkthrough
+### main.cpp - Responsible for running the program
+When the websocket calls the onMessage event handler (ln 62) the model uses the map and vehicle info to update the vehicle's trajectory.
+
+At the beginning of the handler the data is parsed out (ln 72-98).  This data includes car position and sensor data.
+
+Next we do a quick check to see if this is the beginning of the path, and if it is set the cars position (ln 102).
+
+The meat of the model then begins by seeing if there is a car in front of it.  The vehicle will keep adding to its velocity until it encounters a car in its lane.  At this time the 'too_close' flag is set and the car will then decrement its speed (ln 112 - 147).  Also within this block of code, a check is done to see if there are any options to pass.  The 'lane_occupied' function is responsible for checking the sensors in the correct vicinity of the cars positon to determine if the requested lane is open or not.
+
+After we have determined if the vehicle should speed up, slow down, or possiblly change lanes it is time to update the path for the vehicle.  Here we build up a list of points.  Using the 'getXY' helper function we get our new waypoints.  Then we iterate through the list to shift them approprietly.  After the shifting our list of x and y points are ran through the spline tool for smoothing (ln 159 - 218).  
+
+Finally we take our smooth splined points and create map coordinates from them that are passed back into the simulator to navigate the vehicle (ln 222 - 260)
+
+### helpers.h - Helper functions
+getFrenet - Responsible for converting the (x,y) map coordinates to (d,s) Frenet coordinates.
+getXY - Responsible for converting (d,s) Frenet coordinates to (x,y) map coordinates.
+lane_occupied - Responsible for looking through sensor data for the inquired about lane for the inquired about position.  It will return a value indication if a lane is open or not.
+
+
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).  
 
